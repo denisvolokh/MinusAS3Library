@@ -76,6 +76,9 @@ package sg.denisvolokh.minus
 		/**
 		 * Request token by using username and password. 
 		 *  
+		 * @param username, user's login on Minus.com
+		 * @param password, user's password on Minus.com
+		 * 
 		 */
 		public function getToken(username : String, password : String):void
 		{
@@ -128,6 +131,11 @@ package sg.denisvolokh.minus
 			dispatchEvent(minusResultEvent);
 		}
 		
+		
+		/**
+		 * Gives back the actual (logged in) User object
+		 *  
+		 */
 		public function getActiveUser():void
 		{
 			var urlRequest : URLRequest = new URLRequest(GET_ACTIVE_USER_URL);
@@ -168,9 +176,15 @@ package sg.denisvolokh.minus
 			dispatchEvent(faultEvent);
 		}
 		
-		public function getUser(username : String):void
+		/**
+		 * Gives back the User
+		 * 
+		 * @param slug, user’s slug
+		 *  
+		 */
+		public function getUser(slug : String):void
 		{
-			var urlRequest : URLRequest = new URLRequest(StringUtil.substitute(GET_USER_URL, username));
+			var urlRequest : URLRequest = new URLRequest(StringUtil.substitute(GET_USER_URL, slug));
 			urlRequest.method = URLRequestMethod.GET;
 			urlRequest.data = "bearer_token=" + tokenInfo.access_token + "&refresh_token=" + tokenInfo.refresh_token + "&grant_type=refresh_token&" + getClientIDClientKeyString();
 			
@@ -208,9 +222,15 @@ package sg.denisvolokh.minus
 			dispatchEvent(faultEvent);
 		}
 		
-		public function getFolders(folderOwnerName : String):void
+		/**
+		 * Gives back list of user's folders
+		 * 
+		 * @param slug, user’s slug
+		 *  
+		 */
+		public function getFolders(slug : String):void
 		{
-			var urlRequest : URLRequest = new URLRequest(StringUtil.substitute(GET_FOLDERS_URL, folderOwnerName))
+			var urlRequest : URLRequest = new URLRequest(StringUtil.substitute(GET_FOLDERS_URL, slug))
 			urlRequest.method = URLRequestMethod.GET;
 			urlRequest.data = "bearer_token=" + tokenInfo.access_token + "&refresh_token=" + tokenInfo.refresh_token + "&grant_type=refresh_token&" + getClientIDClientKeyString();
 			
@@ -254,9 +274,18 @@ package sg.denisvolokh.minus
 			dispatchEvent(faultEvent);
 		}
 		
-		public function createFolder(newFolderName : String, ownerName : String, isPublic : Boolean = false):void
+		/**
+		 * Create new folder
+		 * 
+		 * @param newFolderName
+		 * @param slug, user's slug
+		 * @param isPublic, optional, default is false
+		 * 
+		 */
+		
+		public function createFolder(newFolderName : String, slug : String, isPublic : Boolean = false):void
 		{
-			var urlRequest : URLRequest = new URLRequest(StringUtil.substitute(GET_FOLDERS_URL, ownerName))//StringUtil.substitute(GET_FOLDER_URL, fodlerID));
+			var urlRequest : URLRequest = new URLRequest(StringUtil.substitute(GET_FOLDERS_URL, slug))//StringUtil.substitute(GET_FOLDER_URL, fodlerID));
 			urlRequest.method = URLRequestMethod.POST;
 			urlRequest.data = "bearer_token=" + tokenInfo.access_token + "&name=" + newFolderName + "&is_public=" + isPublic;
 			
@@ -294,6 +323,12 @@ package sg.denisvolokh.minus
 			dispatchEvent(faultEvent);
 		}
 		
+		/**
+		 * Returns list of files in the specified folder
+		 * 
+		 * @param folderID, ID of the folder from the MinusFolderInfo
+		 * 
+		 */
 		public function getFilesInFolder(folderID : String):void
 		{
 			var urlRequest : URLRequest = new URLRequest(StringUtil.substitute(GET_FILES_URL, folderID));
@@ -340,6 +375,15 @@ package sg.denisvolokh.minus
 			dispatchEvent(faultEvent);
 		}
 		
+		/**
+		 * Uploads file
+		 * 
+		 * @param folderID, ID of the folder from the MinusFolderInfo
+		 * @param filename
+		 * @param fileData
+		 * @param caption, caption will be displayed in the folder
+		 * 
+		 */
 		public function uploadFile(folderID : String, filename : String, fileData : ByteArray, caption : String = ""):void
 		{
 			var loader : MultipartURLLoader = new MultipartURLLoader();
@@ -372,12 +416,21 @@ package sg.denisvolokh.minus
 		
 		protected function onUploadIOErrorHandler(event : IOErrorEvent):void
 		{
-			
+			var faultEvent : MinusEvent = new MinusEvent(MinusEvent.UPLOAD_FILE_FAILED);
+			faultEvent.result = JSON.decode(URLLoader(event.target).data);
+			dispatchEvent(faultEvent);
 		}
 		
-		public function getFollowers(username : String):void
+		/**
+		 * Returns list of followers 
+		 * 
+		 * @param slug
+		 * 
+		 */
+		
+		public function getFollowers(slug : String):void
 		{
-			var urlRequest : URLRequest = new URLRequest(StringUtil.substitute(GET_FOLLOWERS_URL, username));
+			var urlRequest : URLRequest = new URLRequest(StringUtil.substitute(GET_FOLLOWERS_URL, slug));
 			urlRequest.method = URLRequestMethod.GET;
 			urlRequest.data = "bearer_token=" + tokenInfo.access_token + "&refresh_token=" + tokenInfo.refresh_token + "&grant_type=refresh_token&" + getClientIDClientKeyString();
 			
@@ -421,9 +474,15 @@ package sg.denisvolokh.minus
 			dispatchEvent(faultEvent);
 		}
 		
-		public function getFollowing(username : String):void
+		/**
+		 * Returns list of following users 
+		 * 
+		 * @param slug
+		 * 
+		 */
+		public function getFollowing(slug : String):void
 		{
-			var urlRequest : URLRequest = new URLRequest(StringUtil.substitute(GET_FOLLOWING_URL, username));
+			var urlRequest : URLRequest = new URLRequest(StringUtil.substitute(GET_FOLLOWING_URL, slug));
 			urlRequest.method = URLRequestMethod.GET;
 			urlRequest.data = "bearer_token=" + tokenInfo.access_token + "&refresh_token=" + tokenInfo.refresh_token + "&grant_type=refresh_token&" + getClientIDClientKeyString();
 			
@@ -467,9 +526,17 @@ package sg.denisvolokh.minus
 			dispatchEvent(faultEvent);
 		}
 		
-		public function startFollowing(username : String, followee : String):void
+		/**
+		 * Add user to the following list 
+		 * 
+		 * @param slug
+		 * @param followee
+		 * 
+		 */
+		
+		public function startFollowing(slug : String, followee : String):void
 		{
-			var urlRequest : URLRequest = new URLRequest(StringUtil.substitute(GET_FOLLOWING_URL, username));
+			var urlRequest : URLRequest = new URLRequest(StringUtil.substitute(GET_FOLLOWING_URL, slug));
 			urlRequest.method = URLRequestMethod.POST;
 			urlRequest.data = "scope=modify_user&bearer_token=" + tokenInfo.access_token + "&slug=" + followee;
 			
@@ -511,7 +578,7 @@ package sg.denisvolokh.minus
 		
 		protected function onSecurityErrorHandler(event : SecurityErrorEvent):void
 		{
-			
+			dispatchEvent(event);
 		}
 		
 		public function getClientIDClientKeyString():String
