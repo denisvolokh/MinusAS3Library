@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<flexLibProperties includeAllClasses="true" useMultiPlatformConfig="false" version="3">
+  <includeClasses>
+    <classEntry path="sg.denisvolokh.minus.MinusEvent"/>
+    <classEntry path="sg.denisvolokh.minus.MinusClient"/>
+    <classEntry path="sg.denisvolokh.minus.models.TokenInfo"/>
+    <classEntry path="sg.denisvolokh.minus.models.BaseInfo"/>
+    <classEntry path="sg.denisvolokh.minus.models.ErrorInfo"/>
+    <classEntry path="sg.denisvolokh.minus.models.MinusUserInfo"/>
+    <classEntry path="ru.inspirit.net.MultipartURLLoaderEvent"/>
+  </includeClasses>
+  <includeResources/>
+  <namespaceManifests/>
+</flexLibProperties>
